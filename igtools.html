@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IGTools</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--bg1:#12121a;--bg2:#1a1a26;--bg3:#22222f;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
+  --text:#e8e8f0;--muted:#6b6b8a;--muted2:#9090b0;
+  --green:#22c55e;--red:#f43f5e;--yellow:#f59e0b;--blue:#6366f1;--pink:#ec4899;
+  --radius:10px;
+}
+body{font-family:-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+/* Sidebar */
+.sidebar{background:var(--bg1);border-right:1px solid var(--border);padding:0;display:flex;flex-direction:column}
+.logo{padding:18px 16px;font-size:17px;font-weight:800;letter-spacing:-.02em;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.logo i{color:var(--pink);font-size:20px}
+.nav{flex:1;padding:8px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:500;transition:all .15s;margin-bottom:2px}
+.nav-item:hover{background:var(--bg2);color:var(--text)}
+.nav-item.active{background:var(--bg2);color:var(--text)}
+.nav-item i{font-size:16px;flex-shrink:0}
+.sidebar-footer{padding:12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}
+/* Main */
+.main{background:var(--bg);overflow-y:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:10}
+.page-title{font-size:16px;font-weight:700}
+.content{padding:20px}
+/* Cards */
+.card{background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.card-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:inherit}
+.btn:active{opacity:.75}
+.btn-p{background:var(--pink);color:#fff}
+.btn-p:hover{background:#db2777}
+.btn-b{background:var(--blue);color:#fff}
+.btn-g{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.btn-ghost{background:var(--bg2);color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg3)}
+.btn-danger{background:rgba(244,63,94,.15);color:var(--red);border:1px solid rgba(244,63,94,.2)}
+.btn-sm{padding:5px 10px;font-size:11px}
+/* Inputs */
+input,select,textarea{background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;padding:8px 10px;outline:none;font-family:inherit;width:100%;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:rgba(236,72,153,.4)}
+select option{background:var(--bg2)}
+/* Grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.fr{margin-bottom:10px}
+.fl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px;display:block}
+/* Account card */
+.acc-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.acc-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ec4899);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;color:#fff}
+.acc-info{flex:1;min-width:0}
+.acc-username{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acc-meta{font-size:10px;color:var(--muted);margin-top:2px}
+.acc-status{padding:2px 8px;border-radius:5px;font-size:10px;font-weight:600}
+.status-ok{background:rgba(34,197,94,.15);color:var(--green)}
+.status-error{background:rgba(244,63,94,.15);color:var(--red)}
+.status-pending{background:rgba(245,158,11,.15);color:var(--yellow)}
+.status-connecting{background:rgba(99,102,241,.15);color:var(--blue)}
+/* Checkbox */
+.acc-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.acc-check.checked{background:var(--pink);border-color:var(--pink)}
+.acc-check i{font-size:10px;color:#fff}
+/* Upload area */
+.drop-area{border:2px dashed var(--border2);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--muted)}
+.drop-area:hover,.drop-area.dragover{border-color:var(--pink);color:var(--text);background:rgba(236,72,153,.05)}
+.drop-area i{font-size:28px;margin-bottom:8px;display:block}
+/* Media preview */
+.media-preview{width:100%;max-height:200px;object-fit:cover;border-radius:8px;margin-top:8px}
+/* Task card */
+.task-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px}
+.task-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.task-type{font-size:11px;font-weight:600;padding:2px 8px;border-radius:5px}
+.type-photo{background:rgba(99,102,241,.15);color:var(--blue)}
+.type-video{background:rgba(245,158,11,.15);color:var(--yellow)}
+.type-story{background:rgba(236,72,153,.15);color:var(--pink)}
+.type-reel{background:rgba(34,197,94,.15);color:var(--green)}
+.task-status-done{color:var(--green)}
+.task-status-running{color:var(--yellow)}
+.task-status-error{color:var(--red)}
+.task-status-queued{color:var(--muted)}
+.result-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px}
+.result-row:last-child{border:none}
+/* Proxy tag */
+.proxy-tag{font-size:10px;color:var(--muted);background:var(--bg3);padding:2px 6px;border-radius:4px;font-family:monospace}
+/* Stats bar */
+.stats-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.stat-chip{background:var(--bg1);border:1px solid var(--border);border-radius:8px;padding:8px 12px;flex:1;min-width:80px}
+.stat-val{font-size:18px;font-weight:700}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.04em}
+/* Alert */
+.alert{padding:10px 12px;border-radius:8px;font-size:12px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.alert-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:var(--yellow)}
+.alert-ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--green)}
+/* Tabs */
+.tabs{display:flex;gap:2px;background:var(--bg2);border-radius:8px;padding:3px;margin-bottom:14px}
+.tab{flex:1;padding:6px;border:none;border-radius:6px;background:none;color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
+.tab.active{background:var(--bg1);color:var(--text);font-weight:600}
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:var(--bg1);border:1px solid var(--border2);border-radius:14px;padding:20px;width:100%;max-width:480px;margin:16px}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.spin{animation:spin 1s linear infinite;display:inline-block}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="logo"><i class="ti ti-brand-instagram"></i>IGTools</div>
+  <div class="nav">
+    <div class="nav-item active" onclick="showPage('accounts')"><i class="ti ti-users"></i>Аккаунты</div>
+    <div class="nav-item" onclick="showPage('post')"><i class="ti ti-send"></i>Постинг</div>
+    <div class="nav-item" onclick="showPage('tasks')"><i class="ti ti-list-check"></i>Задачи</div>
+  </div>
+  <div class="sidebar-footer">
+    <div id="sb-stats">Загрузка...</div>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="page-title">Аккаунты</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="refreshAll()"><i class="ti ti-refresh"></i>Обновить</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('addCookiesModal').classList.add('show')" id="topbar-cookies"><i class="ti ti-cookie"></i>По куки</button>
+      <button class="btn btn-p btn-sm" id="topbar-action" onclick="showAddModal()"><i class="ti ti-plus"></i>Добавить аккаунт</button>
+    </div>
+  </div>
+  <div class="content" id="content">Загрузка...</div>
+</div>
+
+</div>
+
+
+<!-- Challenge Modal (Email/SMS code) -->
+<div class="modal-bg" id="challengeModal">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-mail"></i>Instagram требует подтверждение</div>
+    <div style="font-size:12px;color:var(--muted2);margin-bottom:12px">Instagram отправил код на email или телефон привязанный к аккаунту</div>
+    <div class="fr">
+      <label class="fl">Аккаунт</label>
+      <div id="ch-username" style="font-size:13px;font-weight:600;padding:6px 0;color:var(--pink)"></div>
+    </div>
+    <div class="fr">
+      <label class="fl">Код подтверждения (6 цифр)</label>
+      <input id="ch-code" placeholder="123456" maxlength="6" style="font-size:20px;text-align:center;letter-spacing:6px;font-weight:700">
+    </div>
+    <input type="hidden" id="ch-acc-id">
+    <div id="ch-err" style="color:var(--red);font-size:12px;min-height:16px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('challengeModal')">Отмена</button>
+      <button class="btn btn-ghost" onclick="sendChallengeCode()"><i class="ti ti-send"></i>Запросить код заново</button>
+      <button class="btn btn-p" onclick="submitChallenge()"><i class="ti ti-check"></i>Подтвердить</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- Add by Cookies Only Modal -->
+<div class="modal-bg" id="addCookiesModal">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-cookie"></i>Добавить аккаунт по куки</div>
+    <div style="font-size:12px;color:var(--muted2);margin-bottom:12px">
+      Не нужен логин/пароль — username определяется автоматически из сессии.<br>
+      Получить: F12 → Application → Cookies → instagram.com → скопируй <b>sessionid</b>
+    </div>
+    <div class="fr"><label class="fl">Cookies JSON</label>
+      <textarea id="ac-cookies" rows="4" placeholder='{"sessionid": "xxx..."}' style="font-family:monospace;font-size:11px"></textarea>
+    </div>
+    <div class="fr">
+      <label class="fl">Прокси (опционально)</label>
+      <input id="ac-proxy" placeholder="socks5://host:port:user:pass или http://user:pass@host:port">
+      <div style="display:flex;gap:6px;margin-top:5px">
+        <button class="btn btn-ghost btn-sm" onclick="testProxy('ac-proxy','ac-proxy-result')"><i class="ti ti-wifi"></i>Проверить прокси</button>
+        <span id="ac-proxy-result" style="font-size:11px;line-height:28px"></span>
+      </div>
+    </div>
+    <div id="ac-err" style="color:var(--red);font-size:12px;min-height:16px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('addCookiesModal')">Закрыть</button>
+      <button class="btn btn-p" onclick="addByCookies()"><i class="ti ti-check"></i>Добавить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cookies Login Modal -->
+<div class="modal-bg" id="cookiesModal">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-cookie"></i>Войти по куки</div>
+    <div style="font-size:12px;color:var(--muted2);margin-bottom:10px">
+      Вставь куки в формате JSON. Получить: F12 → Application → Cookies → instagram.com → скопируй все как JSON.<br>
+      Или используй расширение <b>EditThisCookie</b> → Export.
+    </div>
+    <input type="hidden" id="ck-acc-id">
+    <div id="ck-username" style="font-size:13px;font-weight:600;color:var(--pink);margin-bottom:8px"></div>
+    <div class="fr"><label class="fl">Cookies JSON</label>
+      <textarea id="ck-cookies" rows="5" placeholder='{"sessionid": "xxx", "ds_user_id": "yyy", ...}' style="font-family:monospace;font-size:11px"></textarea>
+    </div>
+    <div id="ck-err" style="color:var(--red);font-size:12px;min-height:16px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('cookiesModal')">Отмена</button>
+      <button class="btn btn-p" onclick="loginWithCookies()"><i class="ti ti-check"></i>Войти</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Account Modal -->
+<div class="modal-bg" id="editModal">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-edit"></i>Редактировать аккаунт</div>
+    <input type="hidden" id="em-id">
+    <div class="fr"><label class="fl">Аккаунт</label>
+      <div id="em-username" style="font-size:14px;font-weight:700;color:var(--pink);padding:4px 0"></div>
+    </div>
+    <div class="fr"><label class="fl">Новый пароль (оставь пустым если не меняешь)</label>
+      <input id="em-pass" type="password" placeholder="Новый пароль"></div>
+    <div class="fr"><label class="fl">Прокси</label>
+      <input id="em-proxy" placeholder="http://user:pass@host:port"></div>
+    <div class="fr"><label class="fl">2FA TOTP секрет</label>
+      <input id="em-totp" placeholder="JBSWY3DPEHPK3PXP"></div>
+    <div class="fr"><label class="fl">Заметки</label>
+      <textarea id="em-notes" rows="2" placeholder="Любые заметки по аккаунту..."></textarea></div>
+    <div id="em-err" style="color:var(--red);font-size:12px;min-height:16px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('editModal')">Отмена</button>
+      <button class="btn btn-p" onclick="saveEdit()"><i class="ti ti-check"></i>Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Manual 2FA Modal -->
+<div class="modal-bg" id="twoFaModal">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-lock"></i>Введи код 2FA вручную</div>
+    <div style="font-size:12px;color:var(--muted2);margin-bottom:12px">
+      Открой приложение-аутентификатор (Google Authenticator, Authy) и введи текущий 6-значный код
+    </div>
+    <input type="hidden" id="tf-acc-id">
+    <div id="tf-username" style="font-size:13px;font-weight:600;color:var(--pink);margin-bottom:10px"></div>
+    <div class="fr"><label class="fl">6-значный код</label>
+      <input id="tf-code" placeholder="123456" maxlength="6" style="font-size:24px;text-align:center;letter-spacing:8px;font-weight:700">
+    </div>
+    <div id="tf-err" style="color:var(--red);font-size:12px;min-height:16px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('twoFaModal')">Отмена</button>
+      <button class="btn btn-p" onclick="submitManual2FA()"><i class="ti ti-check"></i>Войти</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Account Modal -->
+<div class="modal-bg" id="addModal">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-user-plus"></i>Добавить аккаунт</div>
+    <div class="fr"><label class="fl">Логин</label><input id="m-user" placeholder="username"></div>
+    <div class="fr"><label class="fl">Пароль</label><input id="m-pass" type="password" placeholder="password"></div>
+    <div class="fr">
+      <label class="fl">Прокси (опционально)</label>
+      <input id="m-proxy" placeholder="http://user:pass@host:port или socks5://host:port">
+      <div style="font-size:10px;color:var(--muted);margin-top:3px">Форматы: http://host:port | socks5://user:pass@host:port</div>
+    </div>
+    <div class="fr"><label class="fl">2FA ключ (TOTP секрет) — опционально</label>
+      <input id="m-totp" placeholder="JBSWY3DPEHPK3PXP">
+      <div style="font-size:10px;color:var(--muted);margin-top:3px">Instagram → Настройки → Безопасность → 2FA → Приложение → показать ключ</div>
+    </div>
+    <div id="m-err" style="color:var(--red);font-size:12px;min-height:16px"></div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">💡 После добавления можно войти по куки кнопкой 🍪 на карточке аккаунта</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('addModal')">Отмена</button>
+      <button class="btn btn-p" onclick="addAccount()"><i class="ti ti-check"></i>Добавить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Proxy Modal -->
+<div class="modal-bg" id="proxyModal">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-network"></i>Изменить прокси</div>
+    <div class="fr"><label class="fl">Прокси</label>
+      <input id="pm-proxy" placeholder="socks5://host:port:user:pass или http://user:pass@host:port">
+      <div style="display:flex;gap:6px;margin-top:5px">
+        <button class="btn btn-ghost btn-sm" onclick="testProxy('pm-proxy','pm-proxy-result')"><i class="ti ti-wifi"></i>Проверить</button>
+        <span id="pm-proxy-result" style="font-size:11px;line-height:28px"></span>
+      </div>
+    </div>
+    <input type="hidden" id="pm-acc-id">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('proxyModal')">Отмена</button>
+      <button class="btn btn-b" onclick="saveProxy()"><i class="ti ti-check"></i>Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let curPage = 'accounts';
+let accounts = [];
+let tasks = [];
+let selectedAccs = new Set();
+let uploadedMedia = null;
+let pollInterval = null;
+
+async function api(method, path, body) {
+  const opts = {method, headers:{'Content-Type':'application/json'}};
+  if(body) opts.body = JSON.stringify(body);
+  const r = await fetch('/api' + path, opts);
+  return r.json();
+}
+
+function showPage(page) {
+  curPage = page;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item')[['accounts','post','tasks'].indexOf(page)].classList.add('active');
+  document.getElementById('page-title').textContent = {accounts:'Аккаунты',post:'Постинг',tasks:'Задачи'}[page];
+  const btn = document.getElementById('topbar-action');
+  const btnCk = document.getElementById('topbar-cookies');
+  if(page === 'accounts') { btn.innerHTML = '<i class="ti ti-plus"></i>Добавить аккаунт'; btn.onclick = showAddModal; btn.style.display = ''; if(btnCk)btnCk.style.display=''; }
+  else { btn.style.display = 'none'; if(btnCk)btnCk.style.display='none'; }
+  render();
+}
+
+function render() {
+  if(curPage === 'accounts') renderAccounts();
+  else if(curPage === 'post') renderPost();
+  else renderTasks();
+}
+
+// ── ACCOUNTS ─────────────────────────────────────────────────────────────────
+async function loadAccounts() {
+  accounts = await api('GET', '/accounts');
+  render();
+  updateSidebarStats();
+}
+
+function renderAccounts() {
+  const el = document.getElementById('content');
+  if(!accounts.length) {
+    el.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--muted)">
+      <i class="ti ti-users" style="font-size:48px;display:block;margin-bottom:12px"></i>
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px">Нет аккаунтов</div>
+      <div style="font-size:12px">Добавь Instagram аккаунты для начала работы</div>
+    </div>`;
+    return;
+  }
+
+  const ok = accounts.filter(a=>a.status==='ok').length;
+  const err = accounts.filter(a=>a.status==='error').length;
+
+  el.innerHTML = `
+  <div class="stats-bar">
+    <div class="stat-chip"><div class="stat-val">${accounts.length}</div><div class="stat-lbl">Всего</div></div>
+    <div class="stat-chip"><div class="stat-val" style="color:var(--green)">${ok}</div><div class="stat-lbl">Активных</div></div>
+    <div class="stat-chip"><div class="stat-val" style="color:var(--red)">${err}</div><div class="stat-lbl">Ошибок</div></div>
+    <div class="stat-chip"><div class="stat-val" style="color:var(--blue)">${selectedAccs.size}</div><div class="stat-lbl">Выбрано</div></div>
+  </div>
+  <div style="display:flex;gap:6px;margin-bottom:12px">
+    <button class="btn btn-ghost btn-sm" onclick="selectAll()"><i class="ti ti-checkbox"></i>Выбрать все</button>
+    <button class="btn btn-ghost btn-sm" onclick="selectNone()"><i class="ti ti-square"></i>Снять все</button>
+    <button class="btn btn-ghost btn-sm" onclick="checkSelected()"><i class="ti ti-refresh"></i>Проверить выбранные</button>
+  </div>
+  ${accounts.map(acc => `
+  <div class="acc-card">
+    <div class="acc-check ${selectedAccs.has(acc.id)?'checked':''}" onclick="toggleAcc('${acc.id}')">
+      ${selectedAccs.has(acc.id)?'<i class="ti ti-check"></i>':''}
+    </div>
+    <div class="acc-avatar">${acc.username[0].toUpperCase()}</div>
+    <div class="acc-info">
+      <div class="acc-username">@${acc.username}</div>
+      <div class="acc-meta">
+        ${acc.followers !== undefined ? `${acc.followers?.toLocaleString()} фол · ${acc.following?.toLocaleString()} подп · ${acc.posts} постов` : 'Не проверен'}
+        ${acc.proxy ? `<span class="proxy-tag">${acc.proxy.split('@').pop()}</span>` : ''}
+      </div>
+      ${acc.last_error ? `<div style="font-size:10px;color:var(--red);margin-top:2px">${acc.last_error}</div>` : ''}
+      ${acc.notes ? `<div style="font-size:10px;color:var(--muted2);margin-top:2px;font-style:italic">${acc.notes}</div>` : ''}
+    </div>
+    <span class="acc-status status-${acc.status}">${{ok:'Активен',error:'Ошибка',pending:'Ожидание',connecting:'Подключение'}[acc.status]||acc.status}</span>
+    <div style="display:flex;gap:4px">
+      <button class="btn btn-ghost btn-sm" onclick="showEditModal('${acc.id}')" title="Редактировать"><i class="ti ti-edit"></i></button>
+      <button class="btn btn-ghost btn-sm" onclick="showCookiesModal('${acc.id}','${acc.username}')" title="Войти по куки"><i class="ti ti-cookie"></i></button>
+      <button class="btn btn-ghost btn-sm" onclick="checkAcc('${acc.id}')" title="Проверить"><i class="ti ti-refresh"></i></button>
+      ${acc.status==='challenge'?`<button class="btn btn-ghost btn-sm" style="color:var(--yellow)" onclick="showChallengeModal('${acc.id}','${acc.username}')" title="Ввести email код"><i class="ti ti-mail"></i></button>`:''}
+      ${acc.status==='need_2fa'?`<button class="btn btn-ghost btn-sm" style="color:var(--pink)" onclick="showManual2FA('${acc.id}','${acc.username}')" title="Ввести 2FA код"><i class="ti ti-lock"></i></button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="showProxyModal('${acc.id}','${acc.proxy||''}')" title="Прокси"><i class="ti ti-network"></i></button>
+      <button class="btn btn-danger btn-sm" onclick="deleteAcc('${acc.id}')" title="Удалить"><i class="ti ti-trash"></i></button>
+    </div>
+  </div>`).join('')}`;
+}
+
+function toggleAcc(id) {
+  if(selectedAccs.has(id)) selectedAccs.delete(id);
+  else selectedAccs.add(id);
+  renderAccounts();
+}
+function selectAll() { accounts.forEach(a=>selectedAccs.add(a.id)); renderAccounts(); }
+function selectNone() { selectedAccs.clear(); renderAccounts(); }
+
+async function addAccount() {
+  try {
+    const user = document.getElementById('m-user').value.trim();
+    const pass = document.getElementById('m-pass').value.trim();
+    const proxy = (document.getElementById('m-proxy')||{value:''}).value.trim();
+    const totp = (document.getElementById('m-totp')||{value:''}).value.trim();
+    const errEl = document.getElementById('m-err');
+    if(!user||!pass){if(errEl)errEl.textContent='Заполни логин и пароль';return;}
+    if(errEl)errEl.textContent='Добавляю...';
+    const r = await api('POST', '/accounts', {username:user, password:pass, proxy, totp_secret:totp});
+    if(r.error){if(errEl)errEl.textContent=r.error;return;}
+    closeModal('addModal');
+    ['m-user','m-pass','m-proxy','m-totp'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    await loadAccounts();
+  } catch(e) {
+    const errEl = document.getElementById('m-err');
+    if(errEl) errEl.textContent = 'Ошибка: ' + e.message;
+    console.error('addAccount error:', e);
+  }
+}
+
+async function deleteAcc(id) {
+  if(!confirm('Удалить аккаунт?')) return;
+  selectedAccs.delete(id);
+  await api('DELETE', `/accounts/${id}`);
+  await loadAccounts();
+}
+
+async function checkAcc(id) {
+  await api('POST', `/accounts/${id}/check`);
+  setTimeout(loadAccounts, 3000);
+}
+
+async function checkSelected() {
+  for(const id of selectedAccs) await api('POST', `/accounts/${id}/check`);
+  setTimeout(loadAccounts, 3000);
+}
+
+function showProxyModal(id, proxy) {
+  document.getElementById('pm-acc-id').value = id;
+  document.getElementById('pm-proxy').value = proxy;
+  document.getElementById('proxyModal').classList.add('show');
+}
+
+async function saveProxy() {
+  const id = document.getElementById('pm-acc-id').value;
+  const proxy = document.getElementById('pm-proxy').value.trim();
+  await api('POST', `/accounts/${id}/proxy`, {proxy});
+  closeModal('proxyModal');
+  await loadAccounts();
+}
+
+// ── POST ──────────────────────────────────────────────────────────────────────
+function renderPost() {
+  const okAccs = accounts.filter(a => a.status === 'ok');
+  const el = document.getElementById('content');
+
+  el.innerHTML = `
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-title"><i class="ti ti-photo-video"></i>Медиа</div>
+        <div class="drop-area" id="drop-area" onclick="document.getElementById('file-input').click()" ondragover="dragOver(event)" ondragleave="dragLeave()" ondrop="dropFile(event)">
+          <i class="ti ti-cloud-upload"></i>
+          <div style="font-size:13px;font-weight:500">Перетащи файл или нажми</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Фото: JPG, PNG | Видео: MP4, MOV</div>
+        </div>
+        <input type="file" id="file-input" style="display:none" accept="image/*,video/*" onchange="handleFile(this.files[0])">
+        <div id="media-preview-wrap"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="ti ti-align-left"></i>Настройки поста</div>
+        <div class="fr">
+          <label class="fl">Тип контента</label>
+          <select id="post-type">
+            <option value="photo">📷 Фото (пост)</option>
+            <option value="video">🎬 Видео (пост)</option>
+            <option value="reel">🎭 Reels</option>
+            <option value="story_photo">📱 Сторис (фото)</option>
+            <option value="story_video">📱 Сторис (видео)</option>
+          </select>
+        </div>
+        <div class="fr">
+          <label class="fl">Подпись (caption)</label>
+          <textarea id="post-caption" rows="3" placeholder="Текст поста, хэштеги..."></textarea>
+        </div>
+        <div class="fr">
+          <label class="fl">Задержка между аккаунтами (сек)</label>
+          <input type="number" id="post-delay" value="30" min="0" max="3600">
+        </div>
+        <div class="fr">
+          <label class="fl">Заметка к задаче (опционально)</label>
+          <input id="post-notes" placeholder="Например: кампания Бразилия, волна 1">
+        </div>
+        <button class="btn btn-p" style="width:100%" onclick="createPost()">
+          <i class="ti ti-send"></i>Запустить постинг
+        </button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title"><i class="ti ti-users"></i>Аккаунты для постинга (${selectedAccs.size} выбрано)</div>
+        ${!okAccs.length ? `<div style="color:var(--muted);font-size:12px;padding:8px 0">Нет активных аккаунтов. Сначала добавь и проверь аккаунты.</div>` : ''}
+        ${okAccs.map(acc => `
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div class="acc-check ${selectedAccs.has(acc.id)?'checked':''}" onclick="toggleAcc('${acc.id}');renderPost()">
+            ${selectedAccs.has(acc.id)?'<i class="ti ti-check"></i>':''}
+          </div>
+          <div class="acc-avatar" style="width:28px;height:28px;font-size:11px">${acc.username[0].toUpperCase()}</div>
+          <span style="flex:1;font-size:12px;font-weight:500">@${acc.username}</span>
+          <span style="font-size:10px;color:var(--muted)">${acc.posts_today||0} постов сегодня</span>
+        </div>`).join('')}
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button class="btn btn-ghost btn-sm" onclick="selectAll();renderPost()">Все</button>
+          <button class="btn btn-ghost btn-sm" onclick="selectNone();renderPost()">Снять</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function dragOver(e){e.preventDefault();document.getElementById('drop-area').classList.add('dragover');}
+function dragLeave(){document.getElementById('drop-area').classList.remove('dragover');}
+function dropFile(e){e.preventDefault();dragLeave();if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);}
+
+async function handleFile(file) {
+  if(!file) return;
+  const wrap = document.getElementById('media-preview-wrap');
+  const drop = document.getElementById('drop-area');
+  if(wrap) wrap.innerHTML = '<div style="margin-top:8px;font-size:11px;color:var(--yellow)">⏳ Загрузка...</div>';
+  if(drop) drop.style.opacity = '0.5';
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    const r = await fetch('/api/upload', {method:'POST', body:fd});
+    if(!r.ok) throw new Error('Server error: ' + r.status);
+    const data = await r.json();
+    if(drop) drop.style.opacity = '1';
+    if(data.ok) {
+      uploadedMedia = data;
+      const isVideo = file.type.startsWith('video');
+      if(wrap) wrap.innerHTML = `
+        <div style="margin-top:8px;padding:8px;background:var(--bg2);border-radius:8px;display:flex;align-items:center;gap:8px">
+          <i class="ti ti-${isVideo?'video':'photo'}" style="font-size:18px;color:var(--pink)"></i>
+          <div style="flex:1;font-size:11px">
+            <div style="font-weight:500">${data.name}</div>
+            <div style="color:var(--green);font-size:10px">✓ Загружено (${(file.size/1024/1024).toFixed(1)} МБ)</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="uploadedMedia=null;document.getElementById('media-preview-wrap').innerHTML=''"><i class="ti ti-x"></i></button>
+        </div>`;
+    } else {
+      if(wrap) wrap.innerHTML = '<div style="color:var(--red);font-size:11px;margin-top:6px">❌ ' + (data.error||'Ошибка загрузки') + '</div>';
+    }
+  } catch(e) {
+    if(drop) drop.style.opacity = '1';
+    if(wrap) wrap.innerHTML = '<div style="color:var(--red);font-size:11px;margin-top:6px">❌ Ошибка: ' + e.message + '</div>';
+    console.error('Upload error:', e);
+  }
+}
+
+async function createPost() {
+  if(!uploadedMedia) { alert('Выбери медиафайл'); return; }
+  if(!selectedAccs.size) { alert('Выбери хотя бы один аккаунт'); return; }
+  const r = await api('POST', '/post', {
+    accounts: [...selectedAccs],
+    media_path: uploadedMedia.path,
+    caption: document.getElementById('post-caption').value,
+    type: document.getElementById('post-type').value,
+    delay: parseInt(document.getElementById('post-delay').value) || 0,
+  });
+  if(r.ok) {
+    showPage('tasks');
+    setTimeout(loadTasks, 500);
+  } else alert('Ошибка: ' + r.error);
+}
+
+// ── TASKS ─────────────────────────────────────────────────────────────────────
+async function loadTasks() {
+  tasks = await api('GET', '/tasks');
+  if(curPage === 'tasks') renderTasks();
+}
+
+function renderTasks() {
+  const el = document.getElementById('content');
+  if(!tasks.length) {
+    el.innerHTML = `<div style="text-align:center;padding:60px;color:var(--muted)">
+      <i class="ti ti-list-check" style="font-size:48px;display:block;margin-bottom:12px"></i>
+      <div>Задач пока нет</div>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = tasks.map(task => {
+    const typeLabels = {photo:'Фото',video:'Видео',reel:'Reels',story_photo:'Сторис фото',story_video:'Сторис видео'};
+    const statusIcon = {done:'ti-circle-check',running:'ti-loader-2',queued:'ti-clock',error:'ti-circle-x'}[task.status]||'ti-clock';
+    const statusColor = {done:'var(--green)',running:'var(--yellow)',queued:'var(--muted)',error:'var(--red)'}[task.status];
+    const ok = Object.values(task.results||{}).filter(r=>r.status==='ok').length;
+    const err = Object.values(task.results||{}).filter(r=>r.status==='error').length;
+    const total = task.accounts.length;
+
+    return `<div class="task-card">
+      <div class="task-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <i class="ti ${statusIcon} ${task.status==='running'?'spin':''}" style="color:${statusColor};font-size:16px"></i>
+          <span class="task-type type-${task.type}">${typeLabels[task.type]||task.type}</span>
+          <span style="font-size:11px;color:var(--muted)">${task.id}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;color:var(--muted)">${new Date(task.created).toLocaleString('ru-RU')}</span>
+          <button class="btn btn-danger btn-sm" onclick="deleteTask('${task.id}')"><i class="ti ti-x"></i></button>
+        </div>
+      </div>
+      ${task.notes?`<div style="font-size:11px;color:var(--muted2);font-style:italic;margin-bottom:6px">${task.notes}</div>`:''}
+      ${task.status==='running'?`
+      <div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px">
+          <span>Прогресс</span>
+          <span>${task.progress||0} / ${task.accounts.length}</span>
+        </div>
+        <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
+          <div style="width:${Math.round((task.progress||0)/task.accounts.length*100)}%;height:100%;background:var(--pink);border-radius:2px;transition:width .3s"></div>
+        </div>
+        ${task.current_acc?`<div style="font-size:10px;color:var(--muted);margin-top:3px">Сейчас: @${accounts.find(a=>a.id===task.current_acc)?.username||task.current_acc}</div>`:''}
+      </div>`:''}
+      <div style="display:flex;gap:12px;margin-bottom:8px">
+        <span style="font-size:11px"><i class="ti ti-users" style="font-size:12px"></i> ${total} аккаунтов</span>
+        <span style="font-size:11px;color:var(--green)"><i class="ti ti-check" style="font-size:12px"></i> ${ok} ок</span>
+        ${err?`<span style="font-size:11px;color:var(--red)"><i class="ti ti-x" style="font-size:12px"></i> ${err} ошибок</span>`:''}
+        ${task.delay?`<span style="font-size:11px;color:var(--muted)"><i class="ti ti-clock" style="font-size:12px"></i> ${task.delay}с задержка</span>`:''}
+      </div>
+      ${task.caption?`<div style="font-size:11px;color:var(--muted2);margin-bottom:8px;padding:6px 8px;background:var(--bg3);border-radius:6px">${task.caption.slice(0,100)}${task.caption.length>100?'...':''}</div>`:''}
+      ${Object.keys(task.results||{}).length?`
+      <div style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px">
+        ${task.accounts.map(accId => {
+          const r = task.results[accId];
+          const acc = accounts.find(a=>a.id===accId);
+          const name = acc?`@${acc.username}`:accId;
+          if(!r) return `<div class="result-row"><i class="ti ti-clock" style="color:var(--muted)"></i><span>${name}</span><span style="color:var(--muted)">ожидание</span></div>`;
+          if(r.status==='ok') return `<div class="result-row"><i class="ti ti-check" style="color:var(--green)"></i><span>${name}</span>${r.url?`<a href="${r.url}" target="_blank" style="color:var(--blue);font-size:10px">открыть</a>`:'<span style="color:var(--green)">ок</span>'}</div>`;
+          return `<div class="result-row"><i class="ti ti-x" style="color:var(--red)"></i><span>${name}</span><span style="color:var(--red)">${(r.error||'').slice(0,60)}</span></div>`;
+        }).join('')}
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+
+async function deleteTask(id) {
+  await api('DELETE', `/tasks/${id}`);
+  await loadTasks();
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+
+
+function showEditModal(id) {
+  const acc = accounts.find(a=>a.id===id);
+  if(!acc) return;
+  document.getElementById('em-id').value = acc.id;
+  document.getElementById('em-username').textContent = '@' + acc.username;
+  document.getElementById('em-pass').value = '';
+  document.getElementById('em-proxy').value = acc.proxy || '';
+  document.getElementById('em-totp').value = '';
+  document.getElementById('em-notes').value = acc.notes || '';
+  document.getElementById('em-err').textContent = '';
+  document.getElementById('editModal').classList.add('show');
+}
+
+async function saveEdit() {
+  const id = document.getElementById('em-id').value;
+  const data = {
+    proxy: document.getElementById('em-proxy').value.trim(),
+    totp_secret: document.getElementById('em-totp').value.trim(),
+    notes: document.getElementById('em-notes').value.trim(),
+    password: document.getElementById('em-pass').value.trim(),
+  };
+  const r = await api('PATCH', `/accounts/${id}`, data);
+  if(r.error){ document.getElementById('em-err').textContent = r.error; return; }
+  closeModal('editModal');
+  await loadAccounts();
+}
+
+
+function showCookiesModal(id, username) {
+  document.getElementById('ck-acc-id').value = id;
+  document.getElementById('ck-username').textContent = '@' + username;
+  document.getElementById('ck-cookies').value = '';
+  document.getElementById('ck-err').textContent = '';
+  document.getElementById('cookiesModal').classList.add('show');
+}
+
+async function loginWithCookies() {
+  const id = document.getElementById('ck-acc-id').value;
+  const raw = document.getElementById('ck-cookies').value.trim();
+  if(!raw){ document.getElementById('ck-err').textContent = 'Вставь куки'; return; }
+  let cookies;
+  try {
+    cookies = JSON.parse(raw);
+    // Handle array format from EditThisCookie
+    if(Array.isArray(cookies)){
+      const obj = {};
+      cookies.forEach(c => { obj[c.name] = c.value; });
+      cookies = obj;
+    }
+  } catch(e) {
+    document.getElementById('ck-err').textContent = 'Неверный JSON формат';
+    return;
+  }
+  document.getElementById('ck-err').textContent = 'Проверяю...';
+  const r = await api('POST', `/accounts/${id}/login_cookies`, {cookies});
+  if(r.ok){
+    closeModal('cookiesModal');
+    await loadAccounts();
+  } else {
+    document.getElementById('ck-err').textContent = r.error || 'Ошибка';
+  }
+}
+
+function showManual2FA(id, username) {
+  document.getElementById('tf-acc-id').value = id;
+  document.getElementById('tf-username').textContent = '@' + username;
+  document.getElementById('tf-code').value = '';
+  document.getElementById('tf-err').textContent = '';
+  document.getElementById('twoFaModal').classList.add('show');
+}
+
+async function submitManual2FA() {
+  const id = document.getElementById('tf-acc-id').value;
+  const code = document.getElementById('tf-code').value.trim();
+  if(code.length !== 6){ document.getElementById('tf-err').textContent = 'Введи 6-значный код'; return; }
+  document.getElementById('tf-err').textContent = 'Проверяю...';
+  const r = await api('POST', `/accounts/${id}/login_2fa`, {code});
+  if(r.ok){
+    closeModal('twoFaModal');
+    await loadAccounts();
+  } else {
+    document.getElementById('tf-err').textContent = r.error || 'Ошибка';
+  }
+}
+
+function showChallengeModal(id, username) {
+  document.getElementById('ch-acc-id').value = id;
+  document.getElementById('ch-username').textContent = '@' + username;
+  document.getElementById('ch-code').value = '';
+  document.getElementById('ch-err').textContent = '';
+  document.getElementById('challengeModal').classList.add('show');
+}
+
+async function sendChallengeCode() {
+  const id = document.getElementById('ch-acc-id').value;
+  const r = await api('POST', `/accounts/${id}/challenge/send`);
+  if(r.ok) document.getElementById('ch-err').textContent = '✓ Код отправлен на email/телефон';
+  else document.getElementById('ch-err').textContent = 'Ошибка: ' + r.error;
+}
+
+async function submitChallenge() {
+  const id = document.getElementById('ch-acc-id').value;
+  const code = document.getElementById('ch-code').value.trim();
+  if(code.length !== 6) { document.getElementById('ch-err').textContent = 'Введи 6-значный код'; return; }
+  const r = await api('POST', `/accounts/${id}/challenge`, {code});
+  if(r.ok) {
+    closeModal('challengeModal');
+    await loadAccounts();
+  } else {
+    document.getElementById('ch-err').textContent = 'Ошибка: ' + r.error;
+  }
+}
+
+
+
+async function testProxy(inputId, resultId) {
+  const proxy = document.getElementById(inputId).value.trim();
+  const resEl = document.getElementById(resultId);
+  if(!proxy){ if(resEl) resEl.textContent = 'Введи прокси'; return; }
+  if(resEl) resEl.innerHTML = '<span style="color:var(--muted)">Проверяю...</span>';
+  try {
+    const r = await api('POST', '/proxy/test', {proxy});
+    if(r.ok) {
+      if(resEl) resEl.innerHTML = `<span style="color:var(--green)">✓ Работает · IP: ${r.ip} · ${r.normalized}</span>`;
+    } else {
+      if(resEl) resEl.innerHTML = `<span style="color:var(--red)">✗ ${r.error}</span>`;
+    }
+  } catch(e) {
+    if(resEl) resEl.innerHTML = `<span style="color:var(--red)">✗ ${e.message}</span>`;
+  }
+}
+
+async function addByCookies() {
+  const raw = document.getElementById('ac-cookies').value.trim();
+  const proxy = document.getElementById('ac-proxy').value.trim();
+  const errEl = document.getElementById('ac-err');
+  if(!raw){ errEl.textContent='Вставь куки'; return; }
+  let cookies;
+  try {
+    cookies = JSON.parse(raw);
+    if(Array.isArray(cookies)){
+      const obj={};
+      cookies.forEach(c=>{obj[c.name]=c.value;});
+      cookies=obj;
+    }
+  } catch(e) { errEl.textContent='Неверный JSON'; return; }
+  errEl.textContent='Подключаюсь...';
+  const r = await api('POST', '/accounts/add_by_cookies', {cookies, proxy});
+  if(r.ok){
+    errEl.textContent='';
+    closeModal('addCookiesModal');
+    document.getElementById('ac-cookies').value='';
+    document.getElementById('ac-proxy').value='';
+    await loadAccounts();
+  } else {
+    errEl.textContent = r.error || 'Ошибка';
+  }
+}
+
+function showAddModal() { document.getElementById('addModal').classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function updateSidebarStats() {
+  const ok = accounts.filter(a=>a.status==='ok').length;
+  document.getElementById('sb-stats').innerHTML = `${ok}/${accounts.length} аккаунтов активны`;
+}
+async function refreshAll() {
+  await loadAccounts();
+  await loadTasks();
+}
+
+// Auto-refresh running tasks
+setInterval(async () => {
+  const running = tasks.some(t=>t.status==='running'||t.status==='queued');
+  if(running) await loadTasks();
+}, 3000);
+
+setInterval(loadAccounts, 30000);
+
+// Init
+showPage('accounts');
+loadAccounts();
+loadTasks();
+</script>
+</body>
+</html>
